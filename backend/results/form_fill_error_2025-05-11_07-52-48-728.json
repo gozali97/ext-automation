@@ -1,0 +1,7 @@
+{
+  "timestamp": "2025-05-11T07:52:48.728Z",
+  "message": "Cannot redefine property: href\nFunction.defineProperty (<anonymous>)",
+  "stack": "TypeError: Cannot redefine property: href\nFunction.defineProperty (<anonymous>)\n    at evaluate (evaluate at executeFormFillTest (file:///D:/Project/my%20project/ext-automation/backend/form-fill-test.js:476:16), <anonymous>:16:13)\n    at #evaluate (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/ExecutionContext.js:219:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ExecutionContext.evaluate (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/ExecutionContext.js:114:16)\n    at async IsolatedWorld.evaluate (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/IsolatedWorld.js:121:16)\n    at async CdpFrame.evaluate (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/api/Frame.js:350:20)\n    at async CdpPage.evaluate (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/api/Page.js:814:20)\n    at async executeFormFillTest (file:///D:/Project/my%20project/ext-automation/backend/form-fill-test.js:476:5)\n    at async file:///D:/Project/my%20project/ext-automation/backend/routes.js:343:29",
+  "code": "",
+  "name": "TypeError"
+}
