@@ -1,0 +1,36 @@
+{
+  "url": "https://project.k24.co.id",
+  "timestamp": "2025-05-11T05:21:15.095Z",
+  "results": [
+    {
+      "id": "login",
+      "name": "Login Test",
+      "type": "login",
+      "status": "passed",
+      "message": "Login berhasil",
+      "timestamp": "2025-05-11T05:21:12.575Z"
+    },
+    {
+      "id": "test-0",
+      "name": "Login Test",
+      "type": "login",
+      "status": "running",
+      "result": {
+        "timestamp": "2025-05-11T05:21:12.575Z",
+        "details": {}
+      }
+    },
+    {
+      "id": "test-2",
+      "name": "Logout Test",
+      "type": "logout",
+      "status": "passed",
+      "result": {
+        "timestamp": "2025-05-11T05:21:12.575Z",
+        "details": {
+          "message": "Logout berhasil dengan menghapus cookies dan storage"
+        }
+      }
+    }
+  ]
+}

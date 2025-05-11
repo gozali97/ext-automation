@@ -1,33 +1,87 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Ext-Automation: Browser Extension + Node.js Backend
 
-## Getting Started
+Aplikasi ini adalah gabungan dari ekstensi browser (menggunakan Plasmo Framework) dan backend Node.js untuk otomatisasi web dan web scraping.
 
-First, run the development server:
+## Struktur Proyek
+
+```
+ext-automation/
+├── backend/                 # Node.js backend server
+│   ├── config.js            # Configuration settings
+│   ├── routes.js            # API route definitions
+│   ├── scraper.js           # Web scraping functionality
+│   ├── server.js            # Main server entry point
+│   └── utils.js             # Utility functions
+└── extension/               # Browser extension
+    ├── src/
+    │   ├── components/      # React components
+    │   │   ├── TestRunner.tsx
+    │   │   ├── ServerStatus.tsx
+    │   │   └── ...
+    │   ├── lib/
+    │   │   ├── api-client.ts # Backend API client
+    │   │   └── ...
+    │   ├── background.ts    # Extension background script
+    │   └── sidepanel.tsx    # Extension side panel UI
+    └── ...
+```
+
+## Cara Menjalankan
+
+### 1. Menjalankan Backend Node.js
 
 ```bash
-pnpm dev
-# or
+cd backend
+npm install
+npm start
+```
+
+Server akan berjalan di `http://localhost:3000`.
+
+### 2. Menjalankan Ekstensi Browser
+
+```bash
+cd extension
+npm install
 npm run dev
 ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+Ekstensi akan di-build dan siap untuk diload ke browser.
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+## Fitur
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+- **Otomatisasi Login/Logout**: Otomatisasi proses login dan logout pada website
+- **Form Filling**: Mengisi formulir secara otomatis
+- **Test Case Execution**: Menjalankan test case untuk validasi website
+- **Web Scraping**: Mengambil data dari website
+- **Cookie Management**: Mengelola cookie untuk sesi otentikasi
 
-## Making production build
+## Integrasi Backend-Ekstensi
 
-Run the following:
+Ekstensi browser berkomunikasi dengan backend Node.js melalui API HTTP. Backend menggunakan Puppeteer untuk otomatisasi browser dan web scraping.
 
-```bash
-pnpm build
-# or
-npm run build
-```
+### Endpoint API
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
+- `GET /api/status`: Memeriksa status server
+- `POST /api/login`: Melakukan login ke website
+- `POST /api/logout`: Melakukan logout dari website
+- `POST /api/run-tests`: Menjalankan test case
+- `GET /api/results`: Mendapatkan hasil test sebelumnya
 
-## Submit to the webstores
+## Pengembangan
 
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+### Menambahkan Test Case Baru
+
+1. Tambahkan definisi test case di `extension/src/types.ts`
+2. Implementasikan logika test di `backend/server.js`
+3. Update UI di `extension/src/components/TestRunner.tsx`
+
+### Konfigurasi
+
+Konfigurasi backend dapat diubah di `backend/config.js`.
+
+## Kebutuhan Sistem
+
+- Node.js v14+
+- Chrome/Firefox/Edge browser terbaru
+- NPM atau PNPM
