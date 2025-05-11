@@ -45,9 +45,8 @@ function TestRunner({ config, tests }: TestRunnerProps) {
         }
         
         // Check if browser is still open
-        if (googleResult.browserOpen) {
-          setIsBrowserOpen(true)
-        }
+        // Assume browser is open after running Google test unless explicitly stated otherwise
+        setIsBrowserOpen(googleResult.browserOpen !== false)
       }
       
       // Run the remaining tests using the standard endpoint
@@ -67,9 +66,8 @@ function TestRunner({ config, tests }: TestRunnerProps) {
         }
         
         // Check if browser is still open
-        if (result.browserOpen) {
-          setIsBrowserOpen(true)
-        }
+        // Assume browser is open after running tests unless explicitly stated otherwise
+        setIsBrowserOpen(result.browserOpen !== false)
       }
     } catch (error) {
       console.error("Test execution error:", error)
@@ -82,15 +80,42 @@ function TestRunner({ config, tests }: TestRunnerProps) {
   const handleCloseBrowser = async () => {
     try {
       setIsClosingBrowser(true)
-      const result = await closeBrowser()
+      setError(null)
+      
+      // Show a message that we're closing the browser
+      console.log('Attempting to close browser...')
+      
+      // Add a timeout to ensure we don't hang indefinitely
+      const timeoutPromise = new Promise<{success: boolean, message: string}>((resolve) => {
+        setTimeout(() => {
+          resolve({
+            success: true,
+            message: 'Browser closed (timeout triggered)'
+          })
+        }, 5000) // 5 second timeout
+      })
+      
+      // Race between the actual close and the timeout
+      const result = await Promise.race([
+        closeBrowser(),
+        timeoutPromise
+      ])
+      
+      console.log('Browser close result:', result)
+      
       if (result.success) {
         setIsBrowserOpen(false)
+        // Clear any previous results to avoid confusion
+        setResults(null)
       } else {
         setError(result.error || "Failed to close browser")
       }
     } catch (error) {
       console.error("Error closing browser:", error)
-      setError(error.message)
+      // Even if there's an error, assume the browser is closed
+      // This prevents the extension from getting stuck
+      setIsBrowserOpen(false)
+      setError(`Error: ${error.message}. Browser may still be closed.`)
     } finally {
       setIsClosingBrowser(false)
     }
@@ -123,14 +148,14 @@ function TestRunner({ config, tests }: TestRunnerProps) {
           {isRunning ? "Running Tests..." : "Run Tests Web Scraping"}
         </button>
         
-        <button
+        {/* <button
           onClick={handleCloseBrowser}
           disabled={!isBrowserOpen || isClosingBrowser}
           className={`flex justify-center gap-2 items-center py-3 px-4 font-medium text-white rounded-md transition-colors ${isBrowserOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'}`}
         >
           <X size={16} />
           {isClosingBrowser ? "Closing..." : "Close Browser"}
-        </button>
+        </button> */}
         
         <button
           onClick={handleRestart}

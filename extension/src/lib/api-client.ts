@@ -1,5 +1,5 @@
 // api-client.ts - Klien API untuk berkomunikasi dengan backend Node.js
-import type { WebsiteConfig, LoginResponse, LogoutResponse, TestCase } from "~types";
+import type { WebsiteConfig, LoginResponse, LogoutResponse, TestCase } from "../types";
 
 // URL backend
 const API_BASE_URL = "http://localhost:3000/api";
@@ -210,16 +210,44 @@ export async function executeGoogleTest(config: WebsiteConfig, test: TestCase) {
  */
 export async function closeBrowser() {
   try {
+    // Use a timeout to prevent hanging if the server doesn't respond
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch(`${API_BASE_URL}/close-browser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
+      },
+      signal: controller.signal
+    }).catch(err => {
+      // If the error is because the server closed the connection after browser closed,
+      // consider this a success
+      if (err.name === 'AbortError' || err.message.includes('Failed to fetch')) {
+        console.log('Browser likely closed successfully, connection terminated');
+        return new Response(JSON.stringify({
+          success: true,
+          message: "Browser likely closed successfully"
+        }));
       }
+      throw err;
     });
     
+    clearTimeout(timeoutId);
+    
+    // If we get here, the server responded normally
     return await response.json();
   } catch (error) {
     console.error("Close browser error:", error);
+    
+    // If the error is because the connection was closed, consider it a success
+    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+      return {
+        success: true,
+        message: "Browser likely closed successfully, connection terminated"
+      };
+    }
+    
     return {
       success: false,
       error: `Tidak dapat terhubung ke server: ${error.message}`

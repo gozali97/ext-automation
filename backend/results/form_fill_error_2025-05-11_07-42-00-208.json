@@ -1,7 +1,0 @@
-{
-  "timestamp": "2025-05-11T07:42:00.208Z",
-  "message": "Requesting main frame too early!",
-  "stack": "Error: Requesting main frame too early!\n    at assert (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/util/assert.js:15:15)\n    at FrameManager.mainFrame (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/FrameManager.js:210:9)\n    at CdpPage.mainFrame (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/Page.js:403:35)\n    at CdpPage.evaluate (file:///D:/Project/my%20project/ext-automation/backend/node_modules/puppeteer-core/lib/esm/puppeteer/api/Page.js:814:31)\n    at executeFormFillTest (file:///D:/Project/my%20project/ext-automation/backend/form-fill-test.js:156:39)\n    at async file:///D:/Project/my%20project/ext-automation/backend/routes.js:343:29",
-  "code": "",
-  "name": "Error"
-}

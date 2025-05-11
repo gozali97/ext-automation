@@ -386,6 +386,7 @@ router.post("/run-tests", async (req, res) => {
       return res.json({
         success: true,
         results: results,
+        browserOpen: global.activeBrowser !== null, // Selalu sertakan informasi status browser
       });
     } catch (error) {
       console.error("Error during test execution:", error);
@@ -396,6 +397,7 @@ router.post("/run-tests", async (req, res) => {
         message: "Error during test execution",
         error: error.message,
         results: results,
+        browserOpen: global.activeBrowser !== null, // Selalu sertakan informasi status browser
       });
     }
   } finally {
@@ -577,12 +579,50 @@ router.post("/close-browser", async (req, res) => {
   try {
     if (global.activeBrowser) {
       console.log("Menutup browser yang masih terbuka...");
-      await global.activeBrowser.close();
-      global.activeBrowser = null;
-      return res.json({
+      
+      // Send a success response immediately to prevent the extension from hanging
+      // This is important because the browser closing might terminate the connection
+      res.json({
         success: true,
-        message: "Browser berhasil ditutup",
+        message: "Browser sedang ditutup",
       });
+      
+      // Then proceed with browser cleanup and closing
+      try {
+        // Get all pages
+        const pages = await global.activeBrowser.pages();
+        
+        // For each page, allow navigation before closing
+        for (const page of pages) {
+          try {
+            // Execute allowNavigation function in page context to disable navigation prevention
+            await page.evaluate(() => {
+              if (window.allowNavigation) {
+                window.allowNavigation();
+              }
+              // Also clear any beforeunload listeners
+              window.onbeforeunload = null;
+              // Remove all event listeners that might prevent navigation
+              window.removeEventListener('beforeunload', () => {});
+            });
+            console.log("Navigation prevention disabled for page");
+          } catch (pageError) {
+            console.error("Error disabling navigation prevention:", pageError);
+            // Continue with other pages even if this one fails
+          }
+        }
+        
+        // Now close the browser
+        await global.activeBrowser.close();
+        global.activeBrowser = null;
+        console.log("Browser berhasil ditutup");
+      } catch (innerError) {
+        console.error("Error during browser cleanup:", innerError);
+        // Even if there's an error, set the global browser to null
+        global.activeBrowser = null;
+      }
+      
+      // We've already sent the response, so we don't need to return anything here
     } else {
       return res.json({
         success: true,

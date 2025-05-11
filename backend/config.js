@@ -7,8 +7,13 @@ export const config = {
   // Konfigurasi Puppeteer
   puppeteer: {
     headless: process.env.NODE_ENV === 'production', // Headless di production, browser terlihat di development
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    defaultViewport: { width: 1366, height: 768 }
+    args: [
+      '--no-sandbox', 
+      '--disable-setuid-sandbox',
+      '--start-maximized', // Memaksimalkan ukuran browser
+      '--window-size=1920,1080' // Set ukuran window lebih besar
+    ],
+    defaultViewport: null // Menggunakan null agar viewport mengikuti ukuran window
   },
   
   // Konfigurasi timeout
