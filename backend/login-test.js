@@ -51,7 +51,8 @@ export async function executeLoginTest(page, websiteConfig, testResult, __dirnam
     }
 
     // Tunggu halaman dimuat
-    await page.waitForTimeout(3000);
+    // Use page.evaluate with setTimeout as a replacement for waitForTimeout
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 3000)));
 
     // Ambil screenshot untuk debugging
     await page.screenshot({
@@ -152,7 +153,8 @@ export async function executeLoginTest(page, websiteConfig, testResult, __dirnam
           .catch(err => console.log('Navigation timeout setelah klik tombol Google:', err.message));
         
         // Tunggu tambahan untuk memastikan halaman dimuat
-        await page.waitForTimeout(3000);
+        // Use page.evaluate with setTimeout as a replacement for waitForTimeout
+        await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 3000)));
         
         // Ambil screenshot untuk debugging
         await page.screenshot({
@@ -181,7 +183,8 @@ export async function executeLoginTest(page, websiteConfig, testResult, __dirnam
               await nextButton.click();
               
               // Tunggu halaman password muncul
-              await page.waitForTimeout(3000);
+              // Use page.evaluate with setTimeout as a replacement for waitForTimeout
+              await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 3000)));
               
               // Isi password
               await page.waitForSelector('input[type="password"]', { visible: true, timeout: 10000 })
@@ -199,7 +202,7 @@ export async function executeLoginTest(page, websiteConfig, testResult, __dirnam
                   .catch(err => console.log('Navigation timeout setelah login Google:', err.message));
                 
                 // Tunggu tambahan untuk memastikan halaman dimuat
-                await page.waitForTimeout(5000);
+                await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 5000)));
                 
                 // Ambil screenshot setelah login
                 await page.screenshot({
@@ -598,7 +601,7 @@ export async function executeLoginTest(page, websiteConfig, testResult, __dirnam
       }
 
       // Tunggu setelah login
-      await page.waitForTimeout(5000);
+      await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 5000)));
       
       // Ambil screenshot setelah login
       await page.screenshot({

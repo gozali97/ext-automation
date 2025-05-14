@@ -4,6 +4,7 @@ import { ConfigurationForm } from "./components/ConfigurationForm"
 import { TestCaseList } from "./components/TestCaseList"
 import TestRunner from "./components/TestRunner"
 import ServerStatus from "./components/ServerStatus"
+import { closeBrowser } from "./lib/api-client"
 import type { AuthState, WebsiteConfig, TestCase, WebsiteInfo } from "./types"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs"
 import { WebsiteInfoCard } from "./components/WebsiteInfoCard"
@@ -66,6 +67,8 @@ function IndexSidePanel() {
   const [activeTab, setActiveTab] = useState('tests')
   const [error, setError] = useState<string | null>(null)
   const [websiteInfo, setWebsiteInfo] = useState<WebsiteInfo | null>(null)
+  const [isBrowserOpen, setIsBrowserOpen] = useState(false)
+  const [isClosingBrowser, setIsClosingBrowser] = useState(false)
   const storage = new Storage()
 
   useEffect(() => {
@@ -208,6 +211,33 @@ function IndexSidePanel() {
     await storage.set("tests", updatedTests)
   }
 
+  const handleCloseBrowser = async () => {
+    try {
+      setIsClosingBrowser(true)
+      setError(null)
+      
+      // Show a message that we're closing the browser
+      console.log('Attempting to close browser...')
+      
+      const result = await closeBrowser()
+      
+      console.log('Browser close result:', result)
+      
+      if (result.success) {
+        setIsBrowserOpen(false)
+      } else {
+        setError(result.error || "Failed to close browser")
+      }
+    } catch (error) {
+      console.error("Error closing browser:", error)
+      // Even if there's an error, assume the browser is closed
+      setIsBrowserOpen(false)
+      setError(`Error: ${error.message}. Browser may still be closed.`)
+    } finally {
+      setIsClosingBrowser(false)
+    }
+  }
+
   const handleConfigSave = async (newConfig: WebsiteConfig) => {
     try {
       // Save the config
@@ -290,8 +320,24 @@ function IndexSidePanel() {
           <div className="mb-4">
             <TestRunner 
               config={config} 
-              tests={activeTests} 
+              tests={activeTests}
+              onBrowserStatusChange={setIsBrowserOpen}
             />
+            
+            {/* Close Browser Button */}
+            <div className="mt-2">
+              <button
+                onClick={handleCloseBrowser}
+                disabled={!isBrowserOpen || isClosingBrowser}
+                className={`w-full flex justify-center gap-2 items-center py-3 px-4 font-medium text-white rounded-md transition-colors ${isBrowserOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'}`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                {isClosingBrowser ? "Closing..." : "Close Browser"}
+              </button>
+            </div>
           </div>
           
           {/* Configure test cases */}

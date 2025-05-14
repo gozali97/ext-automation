@@ -7,6 +7,7 @@ export const config = {
   // Konfigurasi Puppeteer
   puppeteer: {
     headless: process.env.NODE_ENV === 'production', // Headless di production, browser terlihat di development
+    executablePath: '/usr/bin/google-chrome', // Menggunakan Chrome yang sudah terinstall di sistem
     args: [
       '--no-sandbox', 
       '--disable-setuid-sandbox',

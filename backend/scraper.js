@@ -1,6 +1,6 @@
 // scraper.js - Fungsi-fungsi untuk web scraping
 
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,6 +20,7 @@ const __dirname = dirname(__filename);
 export async function scrapeWebPage(url, options = {}) {
   const browser = await puppeteer.launch({
     headless: config.puppeteer.headless,
+    executablePath: config.puppeteer.executablePath,
     args: config.puppeteer.args,
     defaultViewport: config.puppeteer.defaultViewport
   });
@@ -34,7 +35,7 @@ export async function scrapeWebPage(url, options = {}) {
     });
     
     // Tunggu halaman dimuat
-    await page.waitForTimeout(1000);
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 1000)));
     
     // Scrape data sesuai dengan selector
     const data = await page.evaluate((selectors) => {
@@ -125,6 +126,7 @@ export async function scrapeMultiplePages(urls, options = {}) {
 export async function scrapeAuthenticatedPage(websiteConfig, options = {}) {
   const browser = await puppeteer.launch({
     headless: config.puppeteer.headless,
+    executablePath: config.puppeteer.executablePath,
     args: config.puppeteer.args,
     defaultViewport: config.puppeteer.defaultViewport
   });
@@ -136,7 +138,7 @@ export async function scrapeAuthenticatedPage(websiteConfig, options = {}) {
     await page.goto(websiteConfig.loginUrl || websiteConfig.url);
     
     // Tunggu halaman login dimuat
-    await page.waitForTimeout(2000);
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 2000)));
     
     let loginSuccess = false;
     
@@ -344,6 +346,7 @@ export async function scrapeAuthenticatedPage(websiteConfig, options = {}) {
 export async function extractDataWithPatterns(url, patterns) {
   const browser = await puppeteer.launch({
     headless: config.puppeteer.headless,
+    executablePath: config.puppeteer.executablePath,
     args: config.puppeteer.args,
     defaultViewport: config.puppeteer.defaultViewport
   });

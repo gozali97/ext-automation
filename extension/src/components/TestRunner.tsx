@@ -6,9 +6,10 @@ import { Play, X, RefreshCw } from "lucide-react"
 interface TestRunnerProps {
   config: WebsiteConfig
   tests: TestCase[]
+  onBrowserStatusChange?: (isOpen: boolean) => void
 }
 
-function TestRunner({ config, tests }: TestRunnerProps) {
+function TestRunner({ config, tests, onBrowserStatusChange }: TestRunnerProps) {
   const [isRunning, setIsRunning] = useState(false)
   const [results, setResults] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
@@ -67,7 +68,13 @@ function TestRunner({ config, tests }: TestRunnerProps) {
         
         // Check if browser is still open
         // Assume browser is open after running tests unless explicitly stated otherwise
-        setIsBrowserOpen(result.browserOpen !== false)
+        const browserOpen = result.browserOpen !== false
+        setIsBrowserOpen(browserOpen)
+        
+        // Notify parent component about browser status change
+        if (onBrowserStatusChange) {
+          onBrowserStatusChange(browserOpen)
+        }
       }
     } catch (error) {
       console.error("Test execution error:", error)
@@ -107,6 +114,11 @@ function TestRunner({ config, tests }: TestRunnerProps) {
         setIsBrowserOpen(false)
         // Clear any previous results to avoid confusion
         setResults(null)
+        
+        // Notify parent component about browser status change
+        if (onBrowserStatusChange) {
+          onBrowserStatusChange(false)
+        }
       } else {
         setError(result.error || "Failed to close browser")
       }
@@ -148,15 +160,6 @@ function TestRunner({ config, tests }: TestRunnerProps) {
           {isRunning ? "Running Tests..." : "Run Tests Web Scraping"}
         </button>
         
-        {/* <button
-          onClick={handleCloseBrowser}
-          disabled={!isBrowserOpen || isClosingBrowser}
-          className={`flex justify-center gap-2 items-center py-3 px-4 font-medium text-white rounded-md transition-colors ${isBrowserOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'}`}
-        >
-          <X size={16} />
-          {isClosingBrowser ? "Closing..." : "Close Browser"}
-        </button> */}
-        
         <button
           onClick={handleRestart}
           disabled={!results}
@@ -165,6 +168,15 @@ function TestRunner({ config, tests }: TestRunnerProps) {
           <RefreshCw size={16} />
           Restart
         </button>
+        
+        {/* <button
+          onClick={handleCloseBrowser}
+          disabled={!isBrowserOpen || isClosingBrowser}
+          className={`flex justify-center gap-2 items-center py-3 px-4 font-medium text-white rounded-md transition-colors ${isBrowserOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'}`}
+        >
+          <X size={16} />
+          {isClosingBrowser ? "Closing..." : "Close Browser"}
+        </button> */}
       </div>
       
       {isRunning && (

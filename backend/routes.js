@@ -1,7 +1,7 @@
 // routes.js - Definisi route API untuk backend
 
 import express from "express";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -66,6 +66,7 @@ router.post("/login", async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: config.puppeteer.headless,
+      executablePath: config.puppeteer.executablePath,
       args: config.puppeteer.args,
       defaultViewport: config.puppeteer.defaultViewport,
     });
@@ -144,6 +145,7 @@ router.post("/logout", async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: config.puppeteer.headless,
+      executablePath: config.puppeteer.executablePath,
       args: config.puppeteer.args,
       defaultViewport: config.puppeteer.defaultViewport,
     });
@@ -228,6 +230,7 @@ router.post("/run-tests", async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: config.puppeteer.headless,
+      executablePath: config.puppeteer.executablePath,
       args: config.puppeteer.args,
       defaultViewport: config.puppeteer.defaultViewport,
     });
@@ -448,6 +451,7 @@ router.post("/execute-test", async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: config.puppeteer.headless,
+      executablePath: config.puppeteer.executablePath,
       args: config.puppeteer.args,
       defaultViewport: config.puppeteer.defaultViewport,
     });
